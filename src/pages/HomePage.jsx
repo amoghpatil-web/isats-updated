@@ -6,6 +6,8 @@ import Header from '@/components/Header.jsx';
 import Footer from '@/components/Footer.jsx';
 import WhatsAppButton from '@/components/WhatsAppButton.jsx';
 import { Button } from '@/components/ui/button.jsx';
+import ApplyNowButton from '@/components/ApplyNowButton.jsx';
+
 import { Award, Users, Briefcase, IndianRupee, ArrowRight, Sparkles, MoveUpRight } from 'lucide-react';
 
 const highlights = [
@@ -41,9 +43,10 @@ export default function HomePage() {
                 <p className="isats-hero-description">Discover focused learning pathways, practical training and the confidence to take your next career step.</p>
                 <div className="isats-hero-actions">
                   <Button asChild size="lg" className="isats-primary-button"><Link to="/courses">Explore courses <ArrowRight size={18} /></Link></Button>
+                  <ApplyNowButton />
                   <Link to="/about" className="isats-text-link">Discover ISATS <MoveUpRight size={16} /></Link>
                 </div>
-                
+              
               </motion.div>
               <motion.div className="isats-hero-visual" initial={{ opacity: 0, scale: 0.96, y: 18 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.12 }}>
                 <div className="isats-visual-frame">

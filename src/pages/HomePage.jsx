@@ -8,13 +8,20 @@ import WhatsAppButton from '@/components/WhatsAppButton.jsx';
 import { Button } from '@/components/ui/button.jsx';
 import ApplyNowButton from '@/components/ApplyNowButton.jsx';
 
-import { Award, Users, Briefcase, IndianRupee, ArrowRight, Sparkles, MoveUpRight } from 'lucide-react';
+import { Award, Users, Briefcase, Building2, IndianRupee, ArrowRight, MoveUpRight } from 'lucide-react';
 
 const highlights = [
   { icon: Award, number: '01', title: 'Recognised learning', description: 'Structured programmes designed around professional standards and practical skills.' },
   { icon: Users, number: '02', title: 'Hands-on training', description: 'Build confidence through guided practice, demonstrations and modern equipment.' },
   { icon: Briefcase, number: '03', title: 'Career direction', description: 'Get guidance to take your next step in the aesthetics and trichology industry.' },
   { icon: IndianRupee, number: '04', title: 'Accessible education', description: 'Explore focused training options and speak with our team about your goals.' }
+];
+
+const whyChoose = [
+  { icon: Users, title: 'Experienced faculty', description: 'Learn from industry professionals with years of practical experience in trichology and aesthetic sciences' },
+  { icon: Award, title: 'Certification', description: 'Receive government-recognized certificates that are valued by employers across the healthcare industry' },
+  { icon: Building2, title: 'Modern labs', description: 'Train in state-of-the-art facilities equipped with the latest technology and equipment' },
+  { icon: Briefcase, title: 'Placement support', description: 'Benefit from our dedicated placement cell that connects you with leading clinics and healthcare facilities' }
 ];
 
 const reveal = {
@@ -84,6 +91,38 @@ export default function HomePage() {
                   <span className="isats-card-rule" />
                 </motion.article>
               ))}
+            </div>
+          </section>
+
+          <section className="isats-why-section">
+            <div className="isats-inner-container">
+              <motion.div
+                className="isats-inner-section-heading"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.25 }}
+                variants={reveal}
+              >
+                <div><h2>Why choose <em>ISATS?</em></h2></div>
+                <p>Discover what makes us the preferred choice for aspiring healthcare professionals.</p>
+              </motion.div>
+              <div className="isats-why-grid">
+                {whyChoose.map((item, index) => (
+                  <motion.article
+                    className="isats-why-card"
+                    key={item.title}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.2 }}
+                    variants={reveal}
+                    transition={{ delay: index * 0.07 }}
+                  >
+                    <span className="isats-why-icon"><item.icon size={22} /></span>
+                    <h3>{item.title}</h3>
+                    <p>{item.description}</p>
+                  </motion.article>
+                ))}
+              </div>
             </div>
           </section>
 

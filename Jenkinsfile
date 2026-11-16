@@ -5,7 +5,8 @@ pipeline {
     options {
         timestamps()
         disableConcurrentBuilds()
-        disableDefaultCheckout()
+        skipDefaultCheckout(true)
+        timeout(time: 30, unit: 'MINUTES')
     }
 
     environment {
@@ -17,6 +18,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
+                echo 'Checking out ISATS source code...'
                 checkout scm
             }
         }
@@ -30,18 +32,21 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
+                echo 'Installing project dependencies...'
                 bat 'npm ci'
             }
         }
 
         stage('Run Tests') {
             steps {
+                echo 'Running ISATS tests...'
                 bat 'npm test'
             }
         }
 
         stage('Build Docker Image') {
             steps {
+                echo 'Building ISATS Docker image...'
                 bat 'docker build --pull -t %IMAGE_NAME%:latest .'
             }
         }
@@ -55,10 +60,10 @@ pipeline {
                     bat '''
                     @echo off
 
-                    echo Removing old container...
+                    echo Removing previous container...
                     docker rm -f %CONTAINER_NAME% >NUL 2>&1
 
-                    echo Deploying new container...
+                    echo Starting new ISATS container...
 
                     docker run -d ^
                       --name %CONTAINER_NAME% ^
@@ -69,6 +74,8 @@ pipeline {
                       %IMAGE_NAME%:latest
 
                     if errorlevel 1 exit /b 1
+
+                    echo Container deployment command completed.
                     '''
                 }
             }
@@ -76,8 +83,14 @@ pipeline {
 
         stage('Verify Deployment') {
             steps {
+                echo 'Checking backend health...'
+
                 bat '''
                 powershell -NoProfile -ExecutionPolicy Bypass -Command "$ErrorActionPreference='Stop'; $ok=$false; for($i=0;$i -lt 20;$i++){ try { $r=Invoke-RestMethod 'http://localhost:5001/api/health' -TimeoutSec 5; if($r.ok -eq $true){$ok=$true; Write-Host 'Backend health check passed'; break} } catch { Write-Host 'Waiting for backend...'; }; Start-Sleep -Seconds 3 }; if(-not $ok){ docker logs isats-container; throw 'Backend health check failed' }"
+
+                if errorlevel 1 exit /b 1
+
+                powershell -NoProfile -Command "try { $r=Invoke-WebRequest 'http://localhost:4173/' -UseBasicParsing -TimeoutSec 10; if($r.StatusCode -ne 200){exit 1}; Write-Host 'Frontend health check passed' } catch { Write-Host $_; exit 1 }"
                 '''
             }
         }
@@ -85,12 +98,14 @@ pipeline {
 
     post {
         success {
-            echo 'ISATS deployment successful!'
+            echo 'ISATS CI/CD pipeline completed successfully!'
+            echo 'Frontend: http://localhost:4173'
+            echo 'Backend: http://localhost:5001/api/health'
         }
 
         failure {
-            echo 'ISATS deployment failed!'
-            bat 'docker logs isats-container'
+            echo 'ISATS deployment failed. Checking container logs...'
+            bat 'docker logs isats-container 2>NUL || exit /b 0'
         }
     }
 }

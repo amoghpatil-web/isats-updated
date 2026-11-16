@@ -7,7 +7,7 @@ import { config } from './config.js';
 const scrypt = promisify(crypto.scrypt);
 const SESSION_COOKIE = 'isats_session';
 const OAUTH_STATE_COOKIE = 'isats_oauth_state';
-const SESSION_MS =  24 * 60 * 60 * 1000;
+const SESSION_MS = 7 * 24 * 60 * 60 * 1000;
 const STATE_MS = 10 * 60 * 1000;
 
 export function hashToken(value) {
@@ -294,4 +294,4 @@ export async function consumeOAuthState(req, state) {
 }
 
 
-export const sessionPolicy = { maxAgeMs: SESSION_MS, maxAgeDays: 1 };
+export const sessionPolicy = { maxAgeMs: SESSION_MS, maxAgeDays: 7 };

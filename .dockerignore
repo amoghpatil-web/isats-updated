@@ -3,9 +3,13 @@ node_modules
 dist
 .git
 .gitignore
+
+# Keep backend secrets outside Docker build context
 .env
 .env.*
 !.env.example
 !.env.production
+server/secrets/
+
 npm-debug.log
 .DS_Store

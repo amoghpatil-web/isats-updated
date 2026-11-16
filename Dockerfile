@@ -1,5 +1,5 @@
 
-FROM node:22-alpine
+FROM node:24-alpine
 
 WORKDIR /app
 
@@ -9,6 +9,10 @@ RUN npm ci
 
 COPY . .
 
+# Create directory for the Firebase service account
+RUN mkdir -p /app/server/secrets
+
+# Build frontend using .env.production
 RUN npm run build
 
 ENV NODE_ENV=production
